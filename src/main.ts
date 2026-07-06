@@ -7,7 +7,7 @@ import { degToRad } from 'three/src/math/MathUtils.js';
 import { createGalaxy, galaxyUniforms } from './create-galaxy';
 import { setupGUI } from './setup-gui';
 import { Raycaster, Vector2, Vector3 } from 'three';
-import { cameraRaycastSingle } from './raycast';
+import { cameraRaycastMultiple, cameraRaycastSingle } from './raycast';
 import gsap from 'gsap';
 
 export const DEGREE_180 = Math.PI;
@@ -63,9 +63,6 @@ if (sceneHtmlCanvas) {
     renderer.setSize(sceneHtmlCanvas.clientWidth, sceneHtmlCanvas.clientHeight);
   })
 
-  //vectors used to target 
-  const hitCurrent = new Vector3(0, -50, 0);
-  const hitTarget = new Vector3(0, -50, 0);
   let pointerPos = new Vector2(-200, -200);
   const raycaster = new Raycaster();
 
@@ -86,13 +83,26 @@ if (sceneHtmlCanvas) {
   tl.to(starsUniforms.u_posPerc, {
     value: 1,
     ease: 'circ.inOut',
-    duration: 3
-  });
+    duration: 3,
+    onUpdate: () => {
+
+    }
+  }, 0).to(galaxyUniforms.u_posPerc, {
+    value: 1,
+    ease: 'circ.inOut',
+    duration: 4
+  }, 0);
   let start = false;
   const minSpeed = 0.025;
   const maxSpeed = 4.0;
   //!SECTION - TL ANIMATION
 
+  //vectors used to target 
+  const hitCurrentGl = new Vector3(0, -50, 0);
+  const hitTargetGl = new Vector3(0, -50, 0);
+
+  const hitCurrentSt = new Vector3(0, -50, 0);
+  const hitTargetSt = new Vector3(0, -50, 0);
 
   //RENDERING
   const runLogic = (_deltaTime: number) => {
@@ -108,16 +118,25 @@ if (sceneHtmlCanvas) {
     //lerping the speed using the animation progress
     const speed = maxSpeed + (minSpeed - maxSpeed) * tl.progress();
     starsUniforms.u_time.value = timeElapsed;
-    starsParticles.rotateY(degToRad(speed));
+    starsParticles.rotateY(-degToRad(speed));
 
     if (pointerPos) {
-      const hit = cameraRaycastSingle(camera, pointerPos, raycaster, starsParticles)
-      if (hit && hit[0])
-        hitTarget.set(hit[0].point.x, hit[0].point.y, hit[0].point.z);
+      let hit = cameraRaycastMultiple(camera, pointerPos, raycaster, [starsParticles, obj])
+      for (let i = 0; i < hit.length; i++) {
+        const h = hit[i];
+        if (h.object == obj) {
+          hitTargetGl.set(h.point.x, h.point.y, h.point.z);
+        }
+        if (h.object == starsParticles) {
+          hitTargetSt.set(h.point.x, h.point.y, h.point.z);
+        }
+      }
 
-      hitCurrent.lerp(hitTarget, 0.075);
+      hitCurrentSt.lerp(hitTargetSt, 0.075);
+      hitCurrentGl.lerp(hitTargetGl, 0.075);
 
-      starsUniforms.u_hitPos.value.copy(hitCurrent);
+      starsUniforms.u_hitPos.value.copy(hitCurrentSt);
+      galaxyUniforms.u_hitPos.value.copy(hitCurrentGl);
     }
 
     /////////////////////////////////////////

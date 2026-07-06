@@ -48,7 +48,7 @@ void main() {
     //the shining stars will have the color value go from, 0.8 to 1.8 mult
     shine = mix(1., shine, isShining);
 
-    gl_PointSize = a_data.x * shine;
+    gl_PointSize = a_data.x * shine * step(0.5,u_posPerc);
     gl_PointSize *= (1.0 / -viewPosition.z);
 
     v_distanceFromPointer = distanceFromPointer;

@@ -93,6 +93,13 @@ export function setupGUI({
         .add(starsConfig, "minDistFromCenter", 0, 2, 0.01)
         .onFinishChange(rebuildStars);
 
+
+    const galaxyFolder = gui.addFolder("Galaxy uniforms");
+
+    galaxyFolder
+        .add(galaxyUniforms.u_hitInfluenceRadius, "value", 0, 10, 0.1)
+        .name("radius influence for pointer")
+
     //-----------------------------
     // TEXTURES
     //-----------------------------
@@ -173,6 +180,7 @@ export function setupGUI({
         .add(textureActions, "loadNoiseTexture")
         .name("Load Noise");
 
+    galaxyFolder.open();
     uniformsFolder.open();
     generationFolder.open();
     texturesFolder.open();

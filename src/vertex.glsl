@@ -7,10 +7,14 @@ uniform mat4 modelMatrix;
 
 uniform sampler2D u_noiseTxt;
 uniform float u_time; 
+uniform vec3 u_hitPos;
+uniform float u_posPerc;
+uniform float u_hitInfluenceRadius;
 
 varying vec2 v_uv;
 varying float v_height;
 varying float v_noise;
+varying float v_pointerAlteration;
 
 const vec2 CENTER = vec2(0.5, 0.5);
 const vec2 CIRCLE_START = vec2(1., 0.);
@@ -44,6 +48,15 @@ float angleBetween(vec2 a, vec2 b) {
 }
 
 void main() {
+    vec3 pos = position * u_posPerc;
+    vec4 modelPosition = modelMatrix * vec4(pos, 1.0);
+        
+    vec3 worldPos = modelPosition.xyz;
+    //distance from point
+    float distanceFromPointer = distance(worldPos, u_hitPos);
+    // intensity of push from 0 to 1
+    v_pointerAlteration = clamp((u_hitInfluenceRadius - distanceFromPointer) / u_hitInfluenceRadius, 0.0, 1.0);
+
     //center the uv
     vec2 l_uv = uv - 0.5;
     //rotate it
@@ -82,12 +95,12 @@ void main() {
     float thickness = 0.3;
     float cThickness = 0.15;
 
-    vec3 pos = position;
-    pos.z += finalMask * thickness + centerMask * cThickness;
+    pos.z += finalMask * thickness + centerMask * cThickness + mix(0., 1., v_pointerAlteration) * noise;
 
     v_height = finalMask;
-    
-    vec4 modelPosition = modelMatrix * vec4(pos, 1.0);
+
+    modelPosition = modelMatrix * vec4(pos, 1.0);
+        
     gl_Position = projectionMatrix * viewMatrix * modelPosition;
     v_uv = uv;
 }
