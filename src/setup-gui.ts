@@ -3,6 +3,7 @@ import { galaxyUniforms } from "./create-galaxy";
 import { starsUniforms } from "./create-stars";
 import GUI from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { starsConfig } from "./scene-gui-config";
+import { tl } from "./main";
 
 interface SetupGUIParams {
     rebuildStars: () => void;
@@ -179,6 +180,16 @@ export function setupGUI({
     texturesFolder
         .add(textureActions, "loadNoiseTexture")
         .name("Load Noise");
+
+    const actionFolder = gui.addFolder("Action Folder");
+    const action = {
+        loadIntro() {
+            tl.restart();
+        }
+    }
+    actionFolder
+        .add(action, "loadIntro")
+        .name("Load intro");
 
     galaxyFolder.open();
     uniformsFolder.open();

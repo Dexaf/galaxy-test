@@ -12,6 +12,7 @@ import gsap from 'gsap';
 
 export const DEGREE_180 = Math.PI;
 export const DEGREE_90 = DEGREE_180 / 2;
+export const tl = gsap.timeline({ paused: true });
 
 //SCENE HTML CANVAS
 const sceneHtmlCanvas = document.getElementById("three-scene-canvas") as HTMLCanvasElement;
@@ -79,7 +80,7 @@ if (sceneHtmlCanvas) {
 
 
   //SECTION - TL ANIMATION
-  const tl = gsap.timeline({ paused: true });
+
   tl.to(starsUniforms.u_posPerc, {
     value: 1,
     ease: 'circ.inOut',
