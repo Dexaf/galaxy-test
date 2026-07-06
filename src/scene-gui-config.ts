@@ -2,7 +2,7 @@ export const starsConfig = {
     // Uniforms
     shineTimeRatio: 1,
     shinePerc: 0.1,
-    posPerc: 1,
+    posPerc: 0,
     color: "#ffffff",
 
     // Generation

@@ -8,6 +8,7 @@ import { createGalaxy, galaxyUniforms } from './create-galaxy';
 import { setupGUI } from './setup-gui';
 import { Raycaster, Vector2, Vector3 } from 'three';
 import { cameraRaycastSingle } from './raycast';
+import gsap from 'gsap';
 
 export const DEGREE_180 = Math.PI;
 export const DEGREE_90 = DEGREE_180 / 2;
@@ -65,7 +66,7 @@ if (sceneHtmlCanvas) {
   //vectors used to target 
   const hitCurrent = new Vector3(0, -50, 0);
   const hitTarget = new Vector3(0, -50, 0);
-  let pointerPos = new Vector2(0, 0);
+  let pointerPos = new Vector2(-200, -200);
   const raycaster = new Raycaster();
 
   let rect = renderer.domElement.getBoundingClientRect();
@@ -79,8 +80,35 @@ if (sceneHtmlCanvas) {
   }
   sceneHtmlCanvas.addEventListener('pointermove', pointerMoveRef, { passive: false })
 
+
+  //SECTION - TL ANIMATION
+  const tl = gsap.timeline({ paused: true });
+  tl.to(starsUniforms.u_posPerc, {
+    value: 1,
+    ease: 'circ.inOut',
+    duration: 3
+  });
+  let start = false;
+  const minSpeed = 0.025;
+  const maxSpeed = 4.0;
+  //!SECTION - TL ANIMATION
+
+
   //RENDERING
-  const runLogic = (_: number) => {
+  const runLogic = (_deltaTime: number) => {
+    const timeElapsed = timer.getElapsed();
+
+    if (!start) {
+      tl.play();
+      start = true;
+    } else if (tl.progress() < 1) {
+      tl.time(tl.time() + _deltaTime);
+    }
+
+    //lerping the speed using the animation progress
+    const speed = maxSpeed + (minSpeed - maxSpeed) * tl.progress();
+    starsUniforms.u_time.value = timeElapsed;
+    starsParticles.rotateY(degToRad(speed));
 
     if (pointerPos) {
       const hit = cameraRaycastSingle(camera, pointerPos, raycaster, starsParticles)
@@ -93,11 +121,7 @@ if (sceneHtmlCanvas) {
     }
 
     /////////////////////////////////////////
-    const timeElapsed = timer.getElapsed();
     galaxyUniforms.u_time.value = timeElapsed;
-
-    starsUniforms.u_time.value = timeElapsed;
-    starsParticles.rotateY(degToRad(-0.025));
   }
 
   function rebuildStars() {
