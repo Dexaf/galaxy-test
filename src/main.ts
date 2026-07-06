@@ -7,7 +7,7 @@ import { degToRad } from 'three/src/math/MathUtils.js';
 import { createGalaxy, galaxyUniforms } from './create-galaxy';
 import { setupGUI } from './setup-gui';
 import { Raycaster, Vector2, Vector3 } from 'three';
-import { cameraRaycastMultiple, cameraRaycastSingle } from './raycast';
+import { cameraRaycastMultiple } from './raycast';
 import gsap from 'gsap';
 
 export const DEGREE_180 = Math.PI;

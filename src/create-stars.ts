@@ -1,4 +1,4 @@
-import { AdditiveBlending, BufferAttribute, BufferGeometry, Color, LinearFilter, Points, ShaderMaterial, Texture, TextureLoader, Uniform, Vector2, Vector3 } from "three";
+import { AdditiveBlending, BufferAttribute, BufferGeometry, Color, LinearFilter, Points, ShaderMaterial, Texture, TextureLoader, Uniform, Vector3 } from "three";
 import vertexShader from './star-shader/vertex.glsl?raw';
 import fragmentShader from './star-shader/fragment.glsl?raw';
 import { degToRad } from "three/src/math/MathUtils.js";

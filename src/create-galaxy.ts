@@ -1,11 +1,11 @@
-import { Mesh, PlaneGeometry, RawShaderMaterial, RepeatWrapping, TextureLoader, Uniform, Vector3 } from "three";
+import { Mesh, PlaneGeometry, RawShaderMaterial, RepeatWrapping, Texture, TextureLoader, Uniform, Vector3 } from "three";
 import vertexShader from './vertex.glsl?raw';
 import fragmentShader from './fragment.glsl?raw';
 import { galaxyConfig } from "./scene-gui-config";
 
 export const galaxyUniforms = {
     u_time: new Uniform(0),
-    u_noiseTxt: new Uniform(null),
+    u_noiseTxt: new Uniform(new Texture()),
     u_hitPos: new Uniform(new Vector3(9999, 9999, 9999)),
     u_posPerc: new Uniform(0),
     u_hitInfluenceRadius: new Uniform(1),
